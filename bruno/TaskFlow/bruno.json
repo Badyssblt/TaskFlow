@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "TaskFlow",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
