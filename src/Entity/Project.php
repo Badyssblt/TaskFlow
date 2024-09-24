@@ -3,16 +3,19 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GraphQl\Mutation;
 use App\Enum\State;
 use App\Repository\ProjectRepository;
+use App\State\ProjectSetOwnerProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
-#[ApiResource]
-
+#[ApiResource(graphQlOperations: [
+    new Mutation(name: 'create', processor: ProjectSetOwnerProcessor::class)
+])]
 class Project
 {
     #[ORM\Id]
@@ -36,7 +39,7 @@ class Project
     private ?\DateTimeImmutable $end_at = null;
 
     #[ORM\ManyToOne(inversedBy: 'projects')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $owner = null;
 
     #[ORM\Column(type: Types::STRING, enumType: State::class)]
