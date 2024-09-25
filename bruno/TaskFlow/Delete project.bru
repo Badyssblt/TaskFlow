@@ -1,0 +1,19 @@
+meta {
+  name: Delete project
+  type: graphql
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/api/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation {
+    deleteProject(input: { id: "/api/projects/1" }) {
+      clientMutationId
+    }
+  }
+}

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GraphQl\DeleteMutation;
 use ApiPlatform\Metadata\GraphQl\Mutation;
 use App\Enum\State;
 use App\Repository\ProjectRepository;
@@ -14,7 +15,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ApiResource(graphQlOperations: [
-    new Mutation(name: 'create', processor: ProjectSetOwnerProcessor::class)
+    new Mutation(name: 'create', processor: ProjectSetOwnerProcessor::class),
+    new Mutation(name: 'update', security: "object.owner === user"),
+    new DeleteMutation(name: 'delete', security: "object.owner === user"),
+    new Mutation(name: 'get', security: "object.owner === user"),
 ])]
 class Project
 {
@@ -40,7 +44,7 @@ class Project
 
     #[ORM\ManyToOne(inversedBy: 'projects')]
     #[ORM\JoinColumn(nullable: true)]
-    private ?User $owner = null;
+    public ?User $owner = null;
 
     #[ORM\Column(type: Types::STRING, enumType: State::class)]
     private ?State $state = null;
