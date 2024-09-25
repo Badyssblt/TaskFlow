@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GraphQl\Mutation;
 use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
+use App\State\UserMailProcessor;
 use App\State\UserPasswordHasher;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,8 +16,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[ApiResource]
-#[Post(processor: UserPasswordHasher::class)]
+#[ApiResource(graphQlOperations: [
+    new Mutation(name: 'create', processor: UserMailProcessor::class, args: [
+        'email' => ['type' => 'String!'],
+        'password' => ['type' => 'String!'],
+        'roles' => ['type' => '[String]'],
+        'verificationCode' => ['type' => 'Int']
+    ])
+])]
+#[Post(processor: UserMailProcessor::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -50,11 +59,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: TeamItem::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $teamItems;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $verification_code = null;
+
+    #[ORM\Column]
+    private ?bool $is_verified = false;
+
     public function __construct()
     {
         $this->projects = new ArrayCollection();
         $this->teamItems = new ArrayCollection();
         $this->roles = ['ROLE_USER'];
+        $this->is_verified = false;
     }
 
     public function getId(): ?int
@@ -190,6 +206,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $teamItem->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getVerificationCode(): ?int
+    {
+        return $this->verification_code;
+    }
+
+    public function setVerificationCode(int $verification_code): static
+    {
+        $this->verification_code = $verification_code;
+
+        return $this;
+    }
+
+    public function isVerified(): ?bool
+    {
+        return $this->is_verified;
+    }
+
+    public function setVerified(bool $is_verified): static
+    {
+        $this->is_verified = $is_verified;
 
         return $this;
     }
