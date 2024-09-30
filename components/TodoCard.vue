@@ -11,8 +11,8 @@ const id = ref(0);
 const modalRef = ref(null);
 
 const name = ref(props.todo.name);
-const startedAt = ref(props.todo.startedAt);
-const endAt = ref(props.todo.endAt);
+const startedAt = ref(props.todo.startedAt ? props.todo.startedAt.split('T')[0] : ''); // Extracting date
+const endAt = ref(props.todo.endAt ? props.todo.endAt.split('T')[0] : '');
 
 const formatDate = (value) => {
   if (!value) return '';
