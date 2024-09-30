@@ -3,6 +3,7 @@ const props = defineProps(['todo']);
 
 const { $extractId, $api } = useNuxtApp();
 
+// Permet de re-fetch les todos
 const emit = defineEmits(['deleteValidation']);
 
 const id = ref(0);
@@ -44,6 +45,28 @@ const deleteTask = async () => {
       }
       `
     });
+    emit('deleteValidation')
+  }catch (e) {
+
+  }
+}
+
+const changeTodoState = async (state) => {
+  try {
+    const response = await $api.post('/api/graphql', {
+      query:
+          `
+          mutation {
+            updateTodo(input: { id: "${props.todo.id}", state: "${state}" }){
+              todo {
+                id
+              }
+            }
+          }
+          `
+    });
+    openModal();
+    // Permet de re-fetch les todos
     emit('deleteValidation')
   }catch (e) {
 
@@ -99,7 +122,7 @@ onMounted(() => {
         <Input label="Fin de la tâche" placeholder="26-09-24" type="date" class="w-full" v-model="endAt"/>
       </div>
       <Button>Modifier la tâche</Button>
-      <Button class="bg-lime-700/60">Définir comme finit</Button>
+      <Button type="button" class="bg-lime-700/60" @click="changeTodoState('finished')">Définir comme finit</Button>
       <Button type="button" class="bg-red-900" @click="deleteTaskConfirmation">Supprimer la tâche</Button>
     </form>
   </Modal>

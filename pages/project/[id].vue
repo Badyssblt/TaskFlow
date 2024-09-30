@@ -13,8 +13,11 @@ const endAt = ref();
 const { $api } = useNuxtApp();
 
 const project = ref({});
+const todos = ref([]);
 
 const modalRef = ref(null);
+
+const currentFilter = ref('progress');
 
 const openModal = () => {
   if (modalRef.value) {
@@ -52,7 +55,8 @@ const getProject = async () => {
                       id,
                       name,
                       startedAt,
-                      endAt
+                      endAt,
+                      state
                       }
                     }
                   }
@@ -60,10 +64,26 @@ const getProject = async () => {
           }
         `});
    project.value = response.data.data.project;
+   todos.value = project.value.todos.edges;
   }catch (e) {
     console.log(e)
   }
 }
+
+const changeFilter = (filter) => {
+  currentFilter.value = filter;
+};
+
+const filteredTodos = computed(() => {
+  if (currentFilter.value === 'progress') {
+    return todos.value.filter(todo => todo.node.state === 'progress');
+  } else if (currentFilter.value === 'finished') {
+    return todos.value.filter(todo => todo.node.state === 'finished');
+  } else if (currentFilter.value === 'canceled') {
+    return todos.value.filter(todo => todo.node.state === 'canceled');
+  }
+  return todos.value;
+});
 
 
 
@@ -72,12 +92,13 @@ const createTask = async () => {
     const response = await $api.post('/api/graphql', {
       query: `
       mutation {
-        createTodo(input: { name: "${name.value}", started_at: "${startedAt.value}", end_at: "${endAt.value}", startedAt: "${startedAt.value}", endAt: "${endAt.value}", project: "${project.value.id}" }){
+        createTodo(input: { name: "${name.value}", started_at: "${startedAt.value}", end_at: "${endAt.value}", startedAt: "${startedAt.value}", endAt: "${endAt.value}", project: "${project.value.id}", state: "progress" }){
           todo {
             id,
             name,
             startedAt,
-            endAt
+            endAt,
+            state
           }
         }
       }
@@ -90,9 +111,12 @@ const createTask = async () => {
   }
 }
 
-onMounted(() => {
+
+
+onMounted(async () => {
   id.value = route.params.id;
-  getProject();
+  await getProject();
+  console.log(filteredTodos)
 })
 </script>
 
@@ -134,20 +158,27 @@ onMounted(() => {
             </button>
           </div>
           <div class="flex gap-4 bg-background px-2 py-2 border border-white/20 rounded w-fit mt-2">
-            <button class="bg-white/10 px-8 py-2 rounded">
+            <button class=" px-8 py-2 rounded" :class="currentFilter === 'progress' ? 'bg-white/10' : ''" @click="changeFilter('progress')">
               En cours
             </button>
-            <button class=" px-8 py-2 rounded">
+            <button class=" px-8 py-2 rounded" :class="currentFilter === 'finished' ? 'bg-white/10' : ''" @click="changeFilter('finished')">
               Finis
             </button>
-            <button class=" px-8 py-2 rounded">
+            <button class=" px-8 py-2 rounded" :class="currentFilter === 'canceled' ? 'bg-white/10' : ''" @click="changeFilter('canceled')">
              Annulé
             </button>
           </div>
         </div>
-        <div class="flex flex-wrap mt-12 gap-4">
-          <TodoCard v-for="todo in project.todos.edges" :todo="todo.node" v-if="project.todos" @deleteValidation="getProject"/>
-
+        <div class="flex flex-wrap mt-12 gap-4" v-if="filteredTodos.length !== 0">
+          <TodoCard
+              v-for="todo in filteredTodos"
+              :todo="todo.node"
+              :key="todo.node.id"
+              @deleteValidation="getProject"
+          />
+        </div>
+        <div v-else>
+          <p class="text-white/60 mt-4">Vous n'avez aucune tâche...</p>
         </div>
       </div>
     </div>
