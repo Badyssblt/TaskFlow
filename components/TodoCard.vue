@@ -99,8 +99,14 @@ onMounted(() => {
       <div class="border-b border-white/20 px-6 pb-4">
           <h3>{{ todo.name }}</h3>
         <p class="text-white/60 mt-2">{{ todo.description }}</p>
-        <div class="bg-amber-200 py-1 rounded-full mt-4 w-fit px-6">
-          <p class="text-amber-500 font-medium">En cours</p>
+        <div class="bg-amber-200 py-1 rounded-full mt-4 w-fit px-6" v-if="todo.state === 'progress'">
+          <p class="text-amber-500 font-medium" >En cours</p>
+        </div>
+        <div class="bg-green-200 py-1 rounded-full mt-4 w-fit px-6" v-if="todo.state === 'finished'">
+          <p class="text-green-800 font-medium" >Finis</p>
+        </div>
+        <div class="bg-red-200 py-1 rounded-full mt-4 w-fit px-6" v-if="todo.state === 'canceled'">
+          <p class="text-red-800 font-medium" >Annulé</p>
         </div>
         <p class="flex text-white/60 items-center gap-4 mt-4" :class="{'text-red-600': isPastDate(todo.endAt)}">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
