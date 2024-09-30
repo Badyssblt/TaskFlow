@@ -1,14 +1,27 @@
 <script setup>
 
+const router = useRouter();
 const route = useRoute();
 
 const id = ref(0);
+
+const name = ref('');
+const startedAt = ref();
+const endAt = ref();
+
 
 const { $api } = useNuxtApp();
 
 const project = ref({});
 
-const router = useRouter();
+const modalRef = ref(null);
+
+const openModal = () => {
+  if (modalRef.value) {
+    modalRef.value.toggleMenu();
+  }
+};
+
 
 const goBack = () => {
   if (window.history.length > 1) {
@@ -32,7 +45,17 @@ const getProject = async () => {
                   end_at
                   budget
                   visibility
-                  state
+                  state,
+                  todos {
+                    edges {
+                      node {
+                      id,
+                      name,
+                      startedAt,
+                      endAt
+                      }
+                    }
+                  }
             }
           }
         `});
@@ -41,6 +64,32 @@ const getProject = async () => {
     console.log(e)
   }
 }
+
+
+
+const createTask = async () => {
+  try {
+    const response = await $api.post('/api/graphql', {
+      query: `
+      mutation {
+        createTodo(input: { name: "${name.value}", started_at: "${startedAt.value}", end_at: "${endAt.value}", startedAt: "${startedAt.value}", endAt: "${endAt.value}", project: "${project.value.id}" }){
+          todo {
+            id,
+            name,
+            startedAt,
+            endAt
+          }
+        }
+      }
+      `
+    });
+    openModal();
+    await getProject();
+  }catch (e) {
+
+  }
+}
+
 onMounted(() => {
   id.value = route.params.id;
   getProject();
@@ -77,7 +126,7 @@ onMounted(() => {
         <div class="mt-12">
           <div class="flex items-center justify-between w-96">
             <h3>Tâches</h3>
-            <button class="flex items-center gap-4 border border-primary px-4 py-2 rounded bg-background">
+            <button class="flex items-center gap-4 border border-primary px-4 py-2 rounded bg-background" @click="openModal">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-primary">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
@@ -96,10 +145,31 @@ onMounted(() => {
             </button>
           </div>
         </div>
+        <div class="flex flex-wrap mt-12 gap-4">
+          <TodoCard v-for="todo in project.todos.edges" :todo="todo.node" v-if="project.todos" @deleteValidation="getProject"/>
 
+        </div>
       </div>
     </div>
+
   </div>
+
+  <!--  MODALS -->
+  <Modal title="Créer une tâche" ref="modalRef">
+    <form @submit.prevent="createTask" class="flex flex-col gap-6 mt-4 md:w-[600px] w-full">
+      <Input label="Nom de la tâche" placeholder="Entrer un nom de tâche" v-model="name"/>
+      <div class="flex justify-between gap-6">
+        <Input label="Début de la tâche" placeholder="26-09-24" type="date" class="w-full" v-model="startedAt"/>
+        <Input label="Fin de la tâche" placeholder="26-09-24" type="date" class="w-full" v-model="endAt"/>
+      </div>
+      <Button >Créer la tâche</Button>
+      <!--              <Button>Modifier la tâche</Button>-->
+      <!--              <Button class="bg-lime-700/60">Définir comme finit</Button>-->
+      <!--              <Button type="button" class="bg-red-900" @click="deleteTaskConfirmation">Supprimer la tâche</Button>-->
+    </form>
+  </Modal>
+  <!--  ENDMODALS -->
+
 </template>
 
 <style scoped>
