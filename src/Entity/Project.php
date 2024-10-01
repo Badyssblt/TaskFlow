@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GraphQl\DeleteMutation;
 use ApiPlatform\Metadata\GraphQl\Mutation;
+use ApiPlatform\Metadata\GraphQl\Query;
+use ApiPlatform\Metadata\GraphQl\QueryCollection;
 use App\Enum\State;
 use App\Repository\ProjectRepository;
 use App\State\ProjectSetOwnerProcessor;
@@ -18,7 +20,9 @@ use Doctrine\ORM\Mapping as ORM;
     new Mutation(name: 'create', processor: ProjectSetOwnerProcessor::class),
     new Mutation(name: 'update', security: "object.owner === user"),
     new DeleteMutation(name: 'delete', security: "object.owner === user"),
-    new Mutation(name: 'get', security: "object.owner === user"),
+    new QueryCollection(),
+    new Query(),
+
 ])]
 class Project
 {
@@ -62,9 +66,16 @@ class Project
     #[ORM\Column(length: 255)]
     private ?string $visibility = null;
 
+    /**
+     * @var Collection<int, Todo>
+     */
+    #[ORM\OneToMany(targetEntity: Todo::class, mappedBy: 'project', orphanRemoval: true)]
+    private Collection $todos;
+
     public function __construct()
     {
         $this->teamItems = new ArrayCollection();
+        $this->todos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -206,6 +217,36 @@ class Project
     public function setState(?State $state): void
     {
         $this->state = $state;
+    }
+
+    /**
+     * @return Collection<int, Todo>
+     */
+    public function getTodos(): Collection
+    {
+        return $this->todos;
+    }
+
+    public function addTodo(Todo $todo): static
+    {
+        if (!$this->todos->contains($todo)) {
+            $this->todos->add($todo);
+            $todo->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTodo(Todo $todo): static
+    {
+        if ($this->todos->removeElement($todo)) {
+            // set the owning side to null (unless already changed)
+            if ($todo->getProject() === $this) {
+                $todo->setProject(null);
+            }
+        }
+
+        return $this;
     }
 
 }

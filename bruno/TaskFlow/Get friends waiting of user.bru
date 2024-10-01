@@ -1,0 +1,19 @@
+meta {
+  name: Get friends waiting of user
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{baseUrl}}/api/friends?state=waiting
+  body: none
+  auth: bearer
+}
+
+params:query {
+  state: waiting
+}
+
+auth:bearer {
+  token: {{token}}
+}

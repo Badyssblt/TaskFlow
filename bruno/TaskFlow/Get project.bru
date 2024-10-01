@@ -1,0 +1,36 @@
+meta {
+  name: Get project
+  type: graphql
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/graphql
+  body: graphql
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:graphql {
+  {
+    projects {
+      edges {
+        node {
+          id  # L'ID sera retourné sans l'URI
+          name
+          description
+          priority
+          started_at
+          end_at
+          budget
+          visibility
+          state
+        }
+      }
+    }
+  }
+  
+}

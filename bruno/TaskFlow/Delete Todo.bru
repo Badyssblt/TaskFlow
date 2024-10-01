@@ -1,0 +1,25 @@
+meta {
+  name: Delete Todo
+  type: graphql
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/api/graphql
+  body: graphql
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:graphql {
+  mutation {
+    deleteTodo(input: { id: "/api/todos/6" }){
+      todo {
+        name
+      }
+    }
+  }
+}

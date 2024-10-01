@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GraphQl\Mutation;
+use ApiPlatform\Metadata\GraphQl\Query;
+use ApiPlatform\Metadata\GraphQl\QueryCollection;
 use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
+use App\Resolver\MeResolver;
 use App\State\UserMailProcessor;
 use App\State\UserPasswordHasher;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,6 +16,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -22,7 +26,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
         'password' => ['type' => 'String!'],
         'roles' => ['type' => '[String]'],
         'verificationCode' => ['type' => 'Int']
-    ])
+    ]),
+    new Query(
+        name: 'item_query'
+    ),
+    new Query(
+        name: 'me',
+        security: 'is_granted("ROLE_USER")',
+        args: [
+            'id' => ['type' => 'ID'],
+        ],
+        resolver: MeResolver::class)
 ])]
 #[Post(processor: UserMailProcessor::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -30,9 +44,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['friends:collection'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(['friends:collection'])]
     private ?string $email = null;
 
     /**
@@ -65,12 +81,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $is_verified = false;
 
+    /**
+     * @var Collection<int, Todo>
+     */
+    #[ORM\OneToMany(targetEntity: Todo::class, mappedBy: 'assigned')]
+    private Collection $todos;
+
+    /**
+     * @var Collection<int, Friend>
+     */
+    #[ORM\OneToMany(targetEntity: Friend::class, mappedBy: 'applicant', orphanRemoval: true)]
+    private Collection $friends;
+
     public function __construct()
     {
         $this->projects = new ArrayCollection();
         $this->teamItems = new ArrayCollection();
         $this->roles = ['ROLE_USER'];
         $this->is_verified = false;
+        $this->todos = new ArrayCollection();
+        $this->friends = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -230,6 +260,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerified(bool $is_verified): static
     {
         $this->is_verified = $is_verified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Todo>
+     */
+    public function getTodos(): Collection
+    {
+        return $this->todos;
+    }
+
+    public function addTodo(Todo $todo): static
+    {
+        if (!$this->todos->contains($todo)) {
+            $this->todos->add($todo);
+            $todo->setAssigned($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTodo(Todo $todo): static
+    {
+        if ($this->todos->removeElement($todo)) {
+            // set the owning side to null (unless already changed)
+            if ($todo->getAssigned() === $this) {
+                $todo->setAssigned(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Friend>
+     */
+    public function getFriends(): Collection
+    {
+        return $this->friends;
+    }
+
+    public function addFriend(Friend $friend): static
+    {
+        if (!$this->friends->contains($friend)) {
+            $this->friends->add($friend);
+            $friend->setApplicant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFriend(Friend $friend): static
+    {
+        if ($this->friends->removeElement($friend)) {
+            // set the owning side to null (unless already changed)
+            if ($friend->getApplicant() === $this) {
+                $friend->setApplicant(null);
+            }
+        }
 
         return $this;
     }

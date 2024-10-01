@@ -1,0 +1,25 @@
+meta {
+  name: Change state Friends
+  type: http
+  seq: 17
+}
+
+patch {
+  url: {{baseUrl}}/api/friends/5
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/merge-patch+json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "state": "accepted"
+  }
+}

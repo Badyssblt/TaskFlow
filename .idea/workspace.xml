@@ -118,8 +118,8 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;//wsl.localhost/Ubuntu/home/badyss/ecommerce/www/taskflow/backend&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;backend&quot;,
+    &quot;last_opened_file_path&quot;: &quot;//wsl.localhost/Ubuntu/home/badyss/ecommerce/www/Taskflow/backend&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -151,6 +151,14 @@
       <updated>1727159328969</updated>
       <workItem from="1727159332267" duration="3412000" />
       <workItem from="1727175814286" duration="16486000" />
+      <workItem from="1727515790175" duration="4287000" />
+      <workItem from="1727528545630" duration="957000" />
+      <workItem from="1727533247541" duration="1948000" />
+      <workItem from="1727595881772" duration="591000" />
+      <workItem from="1727624294636" duration="2937000" />
+      <workItem from="1727687253765" duration="2844000" />
+      <workItem from="1727704265649" duration="891000" />
+      <workItem from="1727766168705" duration="3180000" />
     </task>
     <servers />
   </component>

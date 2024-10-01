@@ -1,0 +1,24 @@
+meta {
+  name: Get Friends
+  type: graphql
+  seq: 16
+}
+
+post {
+  url: {{baseUrl}}/api/graphql
+  body: graphql
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:graphql {
+  {
+    meUser{
+      id,
+      email
+    }
+  }
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Login User
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/login_check
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "badyss.blt@gmail.com",
+    "password": "badyss"
+  }
+}
+
+script:post-response {
+  let data = res.getBody();
+  bru.setEnvVar("token",data.token);
+}
