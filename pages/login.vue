@@ -17,6 +17,10 @@ const login = async () => {
     });
 
     store.token = response.data.token
+    store.user = {
+      email: email.value
+    }
+    navigateTo('/dashboard');
   }catch (e) {
     console.log(e)
   }

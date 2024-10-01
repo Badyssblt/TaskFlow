@@ -121,7 +121,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex gap-4 min-h-screen">
+  <div class="flex min-h-screen">
     <Aside/>
     <div class="w-full bg-[#12131C] px-24 pt-6">
       <button @click="goBack" class="text-white/60 text-sm flex items-center gap-1 hover:text-white transition-all">

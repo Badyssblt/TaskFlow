@@ -39,7 +39,7 @@
 </script>
 
 <template>
-  <div class="flex gap-4 min-h-screen">
+  <div class="flex min-h-screen">
     <Aside/>
     <div class="w-full bg-[#12131C] px-24 pt-6">
 

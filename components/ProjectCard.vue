@@ -7,10 +7,8 @@ const id = ref(0);
 
 onMounted(() => {
   id.value = $extractId(props.project.id);
-  console.log(id.value)
 })
 
-console.log(props)
 </script>
 
 <template>

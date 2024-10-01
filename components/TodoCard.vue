@@ -51,6 +51,27 @@ const deleteTask = async () => {
   }
 }
 
+const updateTask = async () => {
+  try {
+    const response = await $api.post('/api/graphql', {
+      query: `
+          mutation {
+            updateTodo(input: { id: "${props.todo.id}", name: "${name.value}", startedAt: "${startedAt.value}", endAt: "${endAt.value}" }){
+              todo {
+                id,
+                name
+              }
+            }
+          }
+      `
+    })
+    emit('deleteValidation')
+    openModal()
+  }catch (e) {
+
+  }
+}
+
 const changeTodoState = async (state) => {
   try {
     const response = await $api.post('/api/graphql', {
@@ -127,8 +148,13 @@ onMounted(() => {
         <Input label="Début de la tâche" placeholder="26-09-24" type="date" class="w-full" v-model="startedAt"/>
         <Input label="Fin de la tâche" placeholder="26-09-24" type="date" class="w-full" v-model="endAt"/>
       </div>
-      <Button>Modifier la tâche</Button>
-      <Button type="button" class="bg-lime-700/60" @click="changeTodoState('finished')">Définir comme finit</Button>
+      <Button type="button" @click="updateTask">Modifier la tâche</Button>
+      <div class="flex flex-col gap-2">
+        <Button type="button" class="!bg-lime-700/60" @click="changeTodoState('finished')">Définir comme finit</Button>
+        <Button type="button" class="!bg-amber-700" @click="changeTodoState('progress')">Définir comme en cours</Button>
+        <Button type="button" class="!bg-red-900/40" @click="changeTodoState('canceled')">Définir comme annulé</Button>
+      </div>
+
       <Button type="button" class="bg-red-900" @click="deleteTaskConfirmation">Supprimer la tâche</Button>
     </form>
   </Modal>

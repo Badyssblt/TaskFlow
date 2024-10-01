@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <aside class="flex flex-col w-fit gap-8">
+  <aside class="flex flex-col w-fit gap-8 px-14 border py-6 border-[#12131C]">
     <button>
       Notifications
     </button>
