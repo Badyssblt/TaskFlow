@@ -1,0 +1,15 @@
+meta {
+  name: Find User
+  type: http
+  seq: 19
+}
+
+get {
+  url: {{baseUrl}}/api/users?name=badyss
+  body: none
+  auth: none
+}
+
+params:query {
+  name: badyss
+}

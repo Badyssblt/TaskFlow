@@ -1,0 +1,21 @@
+meta {
+  name: Create TeamItem
+  type: graphql
+  seq: 20
+}
+
+post {
+  url: {{baseUrl}}/api/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation {
+    createTeamItem(input: { user: "/api/users/2", project: "/api/project/1" }){
+      teamItem {
+        id
+      }
+    }
+  }
+}

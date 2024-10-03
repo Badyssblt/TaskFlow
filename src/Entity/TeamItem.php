@@ -3,16 +3,41 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\GraphQl\DeleteMutation;
+use ApiPlatform\Metadata\GraphQl\Mutation;
 use App\Repository\TeamItemRepository;
+use App\State\FriendSetApplicantProcessor;
+use App\State\TeamItemProvider;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: TeamItemRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    graphQlOperations: [
+        new Mutation(name: 'create',  security: "is_granted('ROLE_USER')", args: [
+            'user' => ['type' => 'String!'],
+            'project' => ['type' => 'String!'],
+            'state' => ['type' => 'String!'],
+            'createdAt' => ['type' => 'String!'],
+        ]),
+        new Mutation(name: 'update',  security: "is_granted('ROLE_USER')"),
+        new DeleteMutation(name: 'delete',  security: "is_granted('ROLE_USER')"),
+    ]
+)]
+#[GetCollection(
+    provider: TeamItemProvider::class,
+    security: "is_granted('ROLE_USER')",
+    normalizationContext: ['groups' => ['teamItem:collection']]
+)]
+#[UniqueEntity(fields:  ['user', 'project'], message: 'Une invitation a déjà été envoyé')]
 class TeamItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['teamItem:collection'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'teamItems')]
@@ -21,10 +46,14 @@ class TeamItem
 
     #[ORM\ManyToOne(inversedBy: 'teamItems')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['teamItem:collection'])]
     private ?Project $project = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $state = null;
 
     public function getId(): ?int
     {
@@ -63,6 +92,18 @@ class TeamItem
     public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getState(): ?string
+    {
+        return $this->state;
+    }
+
+    public function setState(string $state): static
+    {
+        $this->state = $state;
 
         return $this;
     }

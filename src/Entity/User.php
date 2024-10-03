@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\GraphQl\Mutation;
 use ApiPlatform\Metadata\GraphQl\Query;
 use ApiPlatform\Metadata\GraphQl\QueryCollection;
@@ -38,7 +41,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
         ],
         resolver: MeResolver::class)
 ])]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
 #[Post(processor: UserMailProcessor::class)]
+#[GetCollection]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -48,7 +53,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['friends:collection'])]
     private ?string $email = null;
 
     /**
@@ -92,6 +96,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Friend::class, mappedBy: 'applicant', orphanRemoval: true)]
     private Collection $friends;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['friends:collection', 'teamItem:collection'])]
+    private ?string $name = null;
 
     public function __construct()
     {
@@ -320,6 +328,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $friend->setApplicant(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }

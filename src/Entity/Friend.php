@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\GraphQl\Mutation;
 use ApiPlatform\Metadata\Patch;
 use App\Repository\FriendRepository;
+use App\State\FriendProcessor;
 use App\State\FriendSetApplicantProcessor;
 use App\State\FriendWaitingProcessor;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +15,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: FriendRepository::class)]
-
+#[UniqueEntity(
+    fields: ['applicant', 'receiver'],
+    message: 'Une demande est déjà en cours'
+)]
 #[ApiResource(graphQlOperations: [
     new Mutation(name: 'create',  processor: FriendSetApplicantProcessor::class, security: "is_granted('ROLE_USER')", args: [
         'receiver' => ['type' => 'String!'],
@@ -29,14 +33,16 @@ use Symfony\Component\Serializer\Attribute\Groups;
     securityMessage: "Vous devez être connecté pour accéder à cette ressource",
     normalizationContext: ['groups' => ['friends:collection']]
 )]
+#[GetCollection(
+    uriTemplate: '/myfriends',
+    provider: FriendProcessor::class,
+    normalizationContext: ['groups' => ['friends:collection']]
+)]
 #[Patch(
     security: "is_granted('ROLE_USER') and object.receiver == user",
     normalizationContext: ['groups' => ['friends:collection']]
 )]
-#[UniqueEntity(
-    fields: ['applicant', 'receiver'],
-    message: 'Une demande est déjà en cours'
-)]
+
 class Friend
 {
     #[ORM\Id]

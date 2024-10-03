@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ApiResource(graphQlOperations: [
@@ -29,6 +30,7 @@ class Project
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['teamItem:collection'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -48,6 +50,7 @@ class Project
 
     #[ORM\ManyToOne(inversedBy: 'projects')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['teamItem:collection'])]
     public ?User $owner = null;
 
     #[ORM\Column(type: Types::STRING, enumType: State::class)]

@@ -119,7 +119,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;backend&quot;,
-    &quot;last_opened_file_path&quot;: &quot;//wsl.localhost/Ubuntu/home/badyss/ecommerce/www/Taskflow/backend&quot;,
+    &quot;last_opened_file_path&quot;: &quot;//wsl.localhost/Ubuntu/home/badyss/ecommerce/www/Taskflow/backend/src/EventListener&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -130,6 +130,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="\\wsl.localhost\Ubuntu\home\badyss\ecommerce\www\Taskflow\backend\src\EventListener" />
       <recent name="\\wsl.localhost\Ubuntu\home\badyss\ecommerce\www\taskflow\backend" />
     </key>
   </component>
@@ -158,7 +159,9 @@
       <workItem from="1727624294636" duration="2937000" />
       <workItem from="1727687253765" duration="2844000" />
       <workItem from="1727704265649" duration="891000" />
-      <workItem from="1727766168705" duration="6413000" />
+      <workItem from="1727766168705" duration="10838000" />
+      <workItem from="1727885090661" duration="2679000" />
+      <workItem from="1727949883097" duration="4906000" />
     </task>
     <servers />
   </component>
