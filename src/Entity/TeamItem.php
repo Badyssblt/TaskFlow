@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\GraphQl\DeleteMutation;
 use ApiPlatform\Metadata\GraphQl\Mutation;
 use App\Repository\TeamItemRepository;
 use App\State\FriendSetApplicantProcessor;
+use App\State\TeamItemDeleteProcessor;
 use App\State\TeamItemProvider;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -23,7 +24,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
             'createdAt' => ['type' => 'String!'],
         ]),
         new Mutation(name: 'update',  security: "is_granted('ROLE_USER')"),
-        new DeleteMutation(name: 'delete',  security: "is_granted('ROLE_USER')"),
+        new DeleteMutation(name: 'delete',  security: "is_granted('ROLE_USER')", processor: TeamItemDeleteProcessor::class),
     ]
 )]
 #[GetCollection(

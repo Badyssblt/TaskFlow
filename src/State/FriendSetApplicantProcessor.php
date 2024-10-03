@@ -18,7 +18,6 @@ class FriendSetApplicantProcessor implements ProcessorInterface
 
     public function __construct(FriendRepository $friendRepository, Security $security,
                                 #[Autowire(service: 'api_platform.doctrine.orm.state.persist_processor')]
-
                                 ProcessorInterface $processor)
     {
         $this->friendRepository = $friendRepository;

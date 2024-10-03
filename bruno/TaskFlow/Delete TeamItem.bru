@@ -1,0 +1,19 @@
+meta {
+  name: Delete TeamItem
+  type: graphql
+  seq: 21
+}
+
+post {
+  url: {{baseUrl}}/api/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation {
+    deleteTeamItem(input: { id: "/api/team_items/10" }){
+      clientMutationId
+    }
+  }
+}
