@@ -28,18 +28,48 @@ const setStateFriends = async (id, state) => {
   }
 }
 
+const setStateTeam = async (id, state) => {
+  try {
+    const response = await $api.post(`/api/graphql`, {
+          query: `
+          mutation {
+            updateTeamItem(input: { id: "${id}", state: "${state}" }){
+              teamItem {
+                id
+              }
+            }
+          }
+          `
+        })
+    await getNotifications()
+    notificationModal.value.toggleMenu();
+  }catch (e) {
+
+  }
+}
+
 const handleResize = () => {
   isShow.value = window.innerWidth >= 768;
 };
 
 const getNotifications = async () => {
     try {
-      const response = await $api.get('/api/friends', {
-        params: {
-          state: 'waiting'
-        }
-      });
-      notifications.value = response.data['hydra:member'];
+      const [friendsResponse, itemsResponse] = await Promise.all([
+        $api.get('/api/friends', { params: { state: 'waiting' } }),
+        $api.get('/api/team_items')
+      ]);
+
+      const friends = friendsResponse.data['hydra:member'].map(friend => ({
+        ...friend,
+        category: 'friend'
+      }));
+
+      const items = itemsResponse.data['hydra:member'].map(item => ({
+        ...item,
+        category: 'teamItem'
+      }));
+
+      notifications.value = [...friends, ...items];
     }catch (e) {
 
     }
@@ -109,13 +139,28 @@ onMounted(() => {
                   :key="notification.id"
                   class="flex items-center gap-6"
               >
-              <h3>{{ notification.applicant.email}}
-              <p class="text-xs text-white/60">Vous a demandez en amis</p>
-              </h3>
-                <div class="flex gap-4">
-                  <button class="bg-lime-800 p-1 rounded" @click="setStateFriends(notification.id, 'accepted')">Accepter</button>
-                  <button class="bg-red-800 p-1 rounded" @click="setStateFriends(notification.id, 'denied')">Refuser</button>
-                </div>
+
+
+                <!-- Affichage spécifique pour les amis -->
+                <template v-if="notification.category === 'friend'">
+                  <h3>
+                    {{ notification.applicant?.name || notification.team?.name }}
+                  </h3>
+                  <p class="text-xs text-white/60">Vous a demandé en ami</p>
+                  <div class="flex gap-4">
+                    <button class="bg-lime-800 p-1 rounded" @click="setStateFriends(notification.id, 'accepted')">Accepter</button>
+                    <button class="bg-red-800 p-1 rounded" @click="setStateFriends(notification.id, 'denied')">Refuser</button>
+                  </div>
+                </template>
+
+                <!-- Affichage spécifique pour les items de l'équipe -->
+                <template v-else-if="notification.category === 'teamItem'">
+                  <p class="text-xs text-white/60">{{ notification.project.owner.name }} vous a invité à un projet</p>
+                  <div class="flex gap-4">
+                    <button class="bg-lime-800 p-1 rounded" @click="setStateTeam(notification['@id'], 'accepted')">Accepter</button>
+                    <button class="bg-red-800 p-1 rounded" @click="setStateTeam(notification['@id'], 'denied')">Refuser</button>
+                  </div>
+                </template>
               </NotificationCard>
             </div>
             <p v-else class="text-white/60 text-center mt-4">Aucune notifications</p>

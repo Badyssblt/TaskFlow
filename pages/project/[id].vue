@@ -1,23 +1,33 @@
 <script setup>
 
+import {useAuth} from "~/store/auth.js";
+
 const router = useRouter();
 const route = useRoute();
+
+const store = useAuth();
 
 const id = ref(0);
 
 const name = ref('');
 const startedAt = ref();
 const endAt = ref();
+const searchName = ref('');
 
 
 const { $api } = useNuxtApp();
 
 const project = ref({});
 const todos = ref([]);
+const searchedUsers = ref([]);
 
 const modalRef = ref(null);
+const addMemberModalRef = ref(null);
 
 const currentFilter = ref('progress');
+
+const invitationsSent = ref({});
+
 
 const openModal = () => {
   if (modalRef.value) {
@@ -86,6 +96,15 @@ const filteredTodos = computed(() => {
 });
 
 
+const searchFriend = async () => {
+  try {
+    const response = await $api.get('/api/myfriends');
+    searchedUsers.value = response.data['hydra:member'];
+  }catch (e) {
+    
+  }
+}
+
 
 const createTask = async () => {
   try {
@@ -111,12 +130,38 @@ const createTask = async () => {
   }
 }
 
+const isUserInFriend = (friend) => {
+  const user = store.user;
+  if(friend.applicant.id === user.id){
+    return friend.receiver;
+  }
+  return friend.applicant;
+}
+
+const sendInvite = async (userId) => {
+  try {
+    const response = await $api.post('/api/graphql', {
+      query: `
+      mutation {
+        createTeamItem(input: { user: "/api/users/${userId}", project: "/api/projects/${id.value}", state: "waiting", createdAt: "${new Date().toLocaleDateString('en-GB')}"  }){
+          teamItem {
+            id
+          }
+        }
+      }
+      `
+    })
+    invitationsSent.value[userId] = true;
+  }catch (e) {
+
+  }
+}
+
 
 
 onMounted(async () => {
   id.value = route.params.id;
   await getProject();
-  console.log(filteredTodos)
 })
 </script>
 
@@ -138,7 +183,11 @@ onMounted(async () => {
             <div>
 
             </div>
-            <button  class="flex items-center gap-4 border border-primary px-4 py-2 rounded bg-background">
+            <button  class="flex items-center gap-4 border border-primary px-4 py-2 rounded bg-background" @click="() => {
+              addMemberModalRef.toggleMenu();
+              searchFriend();
+}"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-primary">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
               </svg>
@@ -185,7 +234,33 @@ onMounted(async () => {
 
   </div>
 
+
+
   <!--  MODALS -->
+
+  <Modal ref="addMemberModalRef" v-if="searchedUsers">
+    <div>
+      <div>
+        <h3 class="font-bold text-lg my-4">Ajouter un membre à ce projet</h3>
+        <p>Mes amis</p>
+        <div class="flex flex-col gap-4 mt-2" v-if="searchedUsers.length !== 0">
+          <NotificationCard v-for="item in searchedUsers" class="flex justify-between items-center">
+            <p>{{ isUserInFriend(item).name }}</p>
+            <Button @click="sendInvite(isUserInFriend(item).id)">
+              {{ invitationsSent[isUserInFriend(item).id] ? 'Invitation envoyée' : 'Ajouter' }}
+            </Button>
+          </NotificationCard>
+        </div>
+        <div class="text-center mt-4" v-else>
+          <p>Vous n'avez aucun amis...</p>
+          <NuxtLink class="text-primary font-semibold underline" :to="`/project/${id}/team`">En ajouter un</NuxtLink>
+        </div>
+      </div>
+    </div>
+
+  </Modal>
+
+
   <Modal title="Créer une tâche" ref="modalRef">
     <form @submit.prevent="createTask" class="flex flex-col gap-6 mt-4 md:w-[600px] w-full">
       <Input label="Nom de la tâche" placeholder="Entrer un nom de tâche" v-model="name"/>

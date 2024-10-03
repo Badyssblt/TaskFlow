@@ -1,5 +1,19 @@
 <script setup>
+const route = useRoute();
 
+const teamLink = ref(`${route.path}/team`)
+
+const createTeamLink = () => {
+  if (!route.path.endsWith('/team')) {
+    teamLink.value = `${route.path}/team`;
+  } else {
+    teamLink.value = route.path;
+  }
+};
+
+onMounted(() => {
+  createTeamLink()
+})
 </script>
 
 <template>
@@ -13,9 +27,9 @@
     <button>
       Avancement
     </button>
-    <button>
+    <NuxtLink :to="teamLink">
       Equipes
-    </button>
+    </NuxtLink>
   </aside>
 </template>
 

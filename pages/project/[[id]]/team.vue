@@ -1,5 +1,6 @@
 <script setup>
 
+
 const router = useRouter();
 const route = useRoute();
 
@@ -9,16 +10,20 @@ const name = ref('');
 const startedAt = ref();
 const endAt = ref();
 
+const searchName = ref('');
 
 const {$api} = useNuxtApp();
 
 const project = ref({});
 const teams = ref([]);
 
+const invitationsSent = ref({});
+
+
 const modalRef = ref(null);
+const friendModal = ref(null);
 
-const currentFilter = ref('progress');
-
+const searchedUsers = ref([]);
 const openModal = () => {
   if (modalRef.value) {
     modalRef.value.toggleMenu();
@@ -52,7 +57,7 @@ const getTeams = async () => {
                         id
                         user {
                           id,
-                          email
+                          name
                         }
                         createdAt
                       }
@@ -86,6 +91,43 @@ const deleteTeam = async (teamId) => {
   }
 };
 
+const openFriendMenu = () => {
+  friendModal.value.toggleMenu();
+
+}
+
+const searchUser = async () => {
+  try {
+    const response = await $api.get('/api/users', {
+      params: {
+        name: searchName.value
+      }
+    });
+    searchedUsers.value = response.data['hydra:member'];
+  }catch (e) {
+
+  }
+}
+
+const sendInvite = async (userId) => {
+  try {
+    const response = await $api.post('/api/graphql', {
+      query: `
+        mutation {
+          createFriend(input: { receiver: "${userId}", state: "waiting" }){
+            friend {
+              id
+            }
+          }
+        }
+      `
+    });
+    invitationsSent.value[userId] = true;
+  }catch (e) {
+
+  }
+}
+
 
 
 
@@ -111,6 +153,13 @@ onMounted(async () => {
         <div class="border-b border-white/20 pb-12">
           <h2 class="text-2xl font-semibold">Equipe</h2>
           <p class="text-white/60 text-sm my-4">Ajouter, modifier ou supprimer des membres de votre équipe</p>
+          <button  class="flex items-center gap-4 border border-primary px-4 py-2 rounded bg-background" @click="openFriendMenu"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-primary">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+            </svg>
+            Ajouter des amis
+          </button>
           <div>
             <div>
 
@@ -135,6 +184,24 @@ onMounted(async () => {
   </div>
 
   <!--  MODALS -->
+
+  <Modal title="Ajouter un amis" ref="friendModal">
+      <div>
+        <form @submit.prevent="searchUser" class="mt-4">
+          <Input :label="'Rechercher'" placeholder="John Doe" v-model="searchName"/>
+
+        </form>
+        <div class="flex flex-col gap-4 mt-2">
+          <NotificationCard v-for="item in searchedUsers" class="flex justify-between items-center">
+            <p>{{ item.name }}</p>
+            <Button @click="sendInvite(item['@id'])">
+              {{ invitationsSent[item['@id']] ? 'Invitation envoyée' : 'Ajouter' }}
+            </Button>
+          </NotificationCard>
+        </div>
+      </div>
+  </Modal>
+
   <Modal title="Créer une tâche" ref="modalRef">
     <form @submit.prevent="createTask" class="flex flex-col gap-6 mt-4 md:w-[600px] w-full">
       <Input label="Nom de la tâche" placeholder="Entrer un nom de tâche" v-model="name"/>

@@ -19,7 +19,7 @@ const deleteTeam = () => {
       <img src="https://i.pinimg.com/564x/24/22/2e/24222e52d37fdbfc2993517e5885cb26.jpg" alt="" class="w-full h-full object-cover">
     </div>
     <div>
-      <p>{{ team.user.email }}</p>
+      <p>{{ team.user.name }}</p>
       <p>Développeur Web</p>
       <div>
         <p>29 Septembre 2024</p>

@@ -1,4 +1,5 @@
 <script setup>
+import { jwtDecode } from "jwt-decode";
 
 import {useAuth} from "~/store/auth.js";
 
@@ -15,10 +16,11 @@ const login = async () => {
       username: email.value,
       password: password.value
     });
-
+    const decoded = jwtDecode(response.data.token);
     store.token = response.data.token
     store.user = {
-      email: email.value
+      email: email.value,
+      id: decoded.id
     }
     navigateTo('/dashboard');
   }catch (e) {

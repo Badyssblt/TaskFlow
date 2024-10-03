@@ -40,7 +40,6 @@
 
 <template>
   <div class="flex min-h-screen">
-    <Aside/>
     <div class="w-full bg-[#12131C] px-24 pt-6">
 
       <div class="border border-white/20 rounded py-8 min-h-screen">
