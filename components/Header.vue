@@ -100,7 +100,7 @@ onMounted(() => {
 <template>
   <header class="px-[5%] py-4 md:py-8">
     <div class="flex justify-between md:hidden ">
-      <h1 class="font-bold text-xl">TaskFlow</h1>
+      <NuxtLink to="/"><h1 class="font-bold text-xl">TaskFlow</h1></NuxtLink>
       <button @click="toggleMenu">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
@@ -114,7 +114,7 @@ onMounted(() => {
         </svg>
       </button>
       <div class="flex justify-center items-center gap-24 flex-col mt-8 md:flex-row md:justify-between md:mt-0">
-        <h1 class="font-bold text-xl">TaskFlow</h1>
+        <NuxtLink to="/"><h1 class="font-bold text-xl">TaskFlow</h1></NuxtLink>
         <div class="flex gap-4">
           <button>Fonctionnalités</button>
           <NuxtLink to="/login" v-if="!isAuthenticated">Se connecter</NuxtLink>
