@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\GraphQl\Mutation;
 use ApiPlatform\Metadata\GraphQl\Query;
 use ApiPlatform\Metadata\GraphQl\QueryCollection;
 use App\Enum\State;
+use App\State\ProjectCollectionProvider;
 use App\Repository\ProjectRepository;
 use App\State\ProjectSetOwnerProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,7 +22,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
     new Mutation(name: 'create', processor: ProjectSetOwnerProcessor::class),
     new Mutation(name: 'update', security: "object.owner === user"),
     new DeleteMutation(name: 'delete', security: "object.owner === user"),
-    new QueryCollection(),
+    new QueryCollection(name: 'collection_query', provider: ProjectCollectionProvider::class),
     new Query(),
 
 ])]

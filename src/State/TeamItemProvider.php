@@ -4,7 +4,6 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Repository\FriendRepository;
 use App\Repository\TeamItemRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 

@@ -28,7 +28,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
         'email' => ['type' => 'String!'],
         'password' => ['type' => 'String!'],
         'roles' => ['type' => '[String]'],
-        'verificationCode' => ['type' => 'Int']
+        'verificationCode' => ['type' => 'Int'],
+        'name' => ['type' => 'String!']
     ]),
     new Query(
         name: 'item_query'

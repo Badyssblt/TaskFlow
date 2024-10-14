@@ -22,5 +22,6 @@ class ProjectRepository extends ServiceEntityRepository
 
 
 
+
     // Vous pouvez ajouter d'autres méthodes personnalisées ici
 }
