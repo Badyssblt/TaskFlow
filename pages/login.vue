@@ -30,11 +30,12 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
-    <form @submit.prevent="login">
+  <div class="flex flex-col gap-4 items-center">
+    <h2 class="text-2xl font-semibold mt-6">Connectez vous sur Taskflow</h2>
+    <form @submit.prevent="login" class="w-full  md:w-1/2">
       <Input label="Votre email" placeholder="example@gmail.com" v-model="email"/>
       <Input label="Votre mot de passe" placeholder="*******" type="password" v-model="password"/>
-      <Button>Se connecter</Button>
+      <Button class="mt-4 w-full">Se connecter</Button>
     </form>
 
   </div>

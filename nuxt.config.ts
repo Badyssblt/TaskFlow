@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     public: {
-      API_URL: "http://localhost:8215"
+      // API_URL: "http://localhost:8215",
+      API_URL: "https://taskflow.badyssblilita.fr/v1"
     }
   },
   postcss: {
@@ -15,5 +16,5 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt']
+  modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', '@formkit/auto-animate/nuxt']
 })
