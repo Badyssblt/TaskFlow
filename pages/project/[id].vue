@@ -46,7 +46,7 @@ const goBack = () => {
 
 const getProject = async () => {
   try {
-    const response = await $api.post("http://localhost:8215/api/graphql", {
+    const response = await $api.post("/api/graphql", {
       query: `
           {
             project(id: "/api/projects/${id.value}"){

@@ -19,7 +19,7 @@ const createProject = async () => {
     const response = await $api.post('/api/graphql', {
       query: `
         mutation {
-        createProject(input: { name: "${name.value}", description: "${description.value}", priority: ${parseInt(priority.value)}, started_at: "${startedAt.value}", end_at: "${endAt.value}", budget: ${parseFloat(budget.value)}, visibility: "public", state: ACTIVE, startedAt: "${startedAt.value}", endAt: "${endAt.value}" }) {
+          createProject(input: { name: "${name.value}", description: "${description.value}", priority: ${parseInt(priority.value)}, started_at: "${startedAt.value}", end_at: "${endAt.value}", budget: ${parseFloat(budget.value)}, visibility: "public", state: ACTIVE, startedAt: "${startedAt.value}", endAt: "${endAt.value}" }) {
             project {
               name
             }
