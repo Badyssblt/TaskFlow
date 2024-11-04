@@ -13,7 +13,7 @@ onMounted(() => {
 
 <template>
   <NuxtLink :to="`/project/${id}`">
-  <div class="border border-white/20 rounded w-fit py-4 bg-background w-96">
+  <div class="border border-white/20 rounded py-4 bg-background w-96 max-w-lg">
     <div class="border-b border-white/20 px-6 pb-4">
       <div class="flex justify-between gap-14">
         <h3>{{ project.name }}</h3>
@@ -22,7 +22,7 @@ onMounted(() => {
           <p class="text-white/60">Fin: <span class="text-red-600">26/09/2024</span></p>
         </div>
       </div>
-      <p class="text-white/60 mt-2">{{ project.description }}</p>
+      <p class="text-white/60 mt-2 truncate">{{ project.description }}</p>
       <div class="flex flex-col mt-2">
         <p class="text-white/60 text-sm">Progression</p>
         <div class="w-full bg-white/80 h-2 rounded-full relative">

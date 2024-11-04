@@ -107,9 +107,10 @@ onMounted(() => {
             </form>
           </div>
         </div>
-        <div class="flex flex-wrap gap-4 mt-12 px-14 justify-center ">
-          <ProjectCard v-for="project in projects" :project="project.node"/>
+        <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 place-items-center mt-6 px-12">
+          <ProjectCard v-for="project in projects" :project="project.node" :key="project.node.id" />
         </div>
+
       </div>
 
     </div>
