@@ -80,6 +80,7 @@ const getProject = async () => {
   }
 }
 
+
 const changeFilter = (filter) => {
   currentFilter.value = filter;
 };
@@ -166,9 +167,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex min-h-screen">
+  <div class="flex flex-col md:flex-row min-h-screen">
     <Aside/>
-    <div class="w-full bg-[#12131C] px-24 pt-6">
+    <div class="w-full bg-[#12131C] px-6 md:px-24 pt-6">
       <button @click="goBack" class="text-white/60 text-sm flex items-center gap-1 hover:text-white transition-all">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -197,7 +198,7 @@ onMounted(async () => {
         </div>
 
         <div class="mt-12">
-          <div class="flex items-center justify-between w-96">
+          <div class="flex items-center justify-between w-full md:w-96">
             <h3>Tâches</h3>
             <button class="flex items-center gap-4 border border-primary px-4 py-2 rounded bg-background" @click="openModal">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-primary">

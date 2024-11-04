@@ -51,6 +51,14 @@ const getProjects = async () => {
                   budget
                   visibility
                   state
+                  todos {
+                    edges {
+                      node {
+                        state
+                      }
+                    }
+                    totalCount
+                  }
                 }
               }
             }
@@ -59,6 +67,7 @@ const getProjects = async () => {
     });
     allProjects.value = response.data.data.projects.edges;
     projects.value = allProjects.value;
+
   } catch (e) {
     console.log(e);
   }
@@ -88,26 +97,26 @@ onMounted(() => {
 
 <template>
   <div class="flex min-h-screen">
-    <div class="w-full bg-[#12131C] px-24 pt-6">
+    <div class="w-full bg-[#12131C] px-6 md:px-24 pt-6">
 
       <div class="border border-white/20 rounded py-8 min-h-screen">
-        <div class="flex justify-between border-b border-white/20 px-14 pb-8">
+        <div class="flex flex-col md:flex-row justify-between border-b border-white/20 px-14 pb-8">
           <div>
             <h2 class="text-2xl font-semibold">Tous mes projets</h2>
             <p class="text-sm text-white/60 mt-2">Créer et accéder à vos projets</p>
           </div>
           <div class="flex flex-col gap-6 items-end">
-            <Button class="flex items-center gap-4 w-fit" @click="openModal">
+            <Button class="flex items-center gap-4 w-fit mt-6 md:mt-0" @click="openModal">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
               Créer un projet</Button>
-            <form class="w-96" @submit.prevent="searchProjects">
+            <form class="md:w-96" @submit.prevent="searchProjects">
               <Input v-model="searchQuery" @input="searchProjects" placeholder="Rechercher un projet"/>
             </form>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 place-items-center mt-6 px-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 place-items-center mt-6 px-12 gap-4">
           <ProjectCard v-for="project in projects" :project="project.node" :key="project.node.id" />
         </div>
 
