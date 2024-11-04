@@ -116,11 +116,9 @@ onMounted(() => {
       <div class="flex justify-center items-center gap-24 flex-col mt-8 md:flex-row md:justify-between md:mt-0">
         <NuxtLink to="/"><h1 class="font-bold text-xl">TaskFlow</h1></NuxtLink>
         <div class="flex gap-4">
-          <button>Fonctionnalités</button>
           <NuxtLink to="/login" v-if="!isAuthenticated">Se connecter</NuxtLink>
-          <button>Commencer</button>
         </div>
-        <div>
+        <div v-if="isAuthenticated">
           <button @click="notificationModal.toggleMenu">
             <!--        ICON NOTIFICATION-->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" v-if="notifications.length === 0">
