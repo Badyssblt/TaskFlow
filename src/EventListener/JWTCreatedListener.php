@@ -41,6 +41,7 @@ public function onJWTCreated(JWTCreatedEvent $event)
 
     $event->setData($payload);
 
+
     $header        = $event->getHeader();
     $header['cty'] = 'JWT';
 

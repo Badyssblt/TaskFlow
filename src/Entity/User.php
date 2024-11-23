@@ -14,6 +14,7 @@ use App\Repository\UserRepository;
 use App\Resolver\MeResolver;
 use App\State\UserMailProcessor;
 use App\State\UserPasswordHasher;
+use App\State\UserPatchProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -40,7 +41,15 @@ use Symfony\Component\Serializer\Attribute\Groups;
         args: [
             'id' => ['type' => 'ID'],
         ],
-        resolver: MeResolver::class)
+        resolver: MeResolver::class),
+    new Mutation(name: 'update', processor: UserPatchProcessor::class, args: [
+        'id' => ['type' => 'ID'],
+        'email' => ['type' => 'String!'],
+        'password' => ['type' => 'String!'],
+        'roles' => ['type' => '[String]'],
+        'verificationCode' => ['type' => 'String'],
+        'name' => ['type' => 'String!']
+    ])
 ])]
 #[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
 #[Post(processor: UserMailProcessor::class)]
