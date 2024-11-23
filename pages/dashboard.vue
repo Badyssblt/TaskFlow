@@ -1,4 +1,9 @@
 <script setup>
+
+definePageMeta({
+  middleware: "islogged"
+})
+
 const { $api } = useNuxtApp();
 
 const name = ref('');

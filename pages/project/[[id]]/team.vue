@@ -1,5 +1,7 @@
 <script setup>
-
+definePageMeta({
+  middleware: "islogged"
+})
 
 const router = useRouter();
 const route = useRoute();
